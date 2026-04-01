@@ -1,6 +1,6 @@
 THE-controller — 桌面智能助手 (本地AI + 物理控制)
 一个轻量级的桌面智能体，通过本地大模型（Ollama）理解自然语言，执行桌面自动化操作（点击、输入、快捷键等），并可扩展为树莓派物理控制终端。基于 Python + Tkinter 构建，极简高效。
-
+```
 目录结构
 text
 THE-controller/
@@ -94,7 +94,7 @@ AI 可以通过输出 {"type": "skill", "name": "my_skill", "args": {...}} 调�
 
 添加新环境
 在 config/settings.py 的 ENVIRONMENTS 字典中添加新条目，定义 system_prompt 和可用技能列表。
-
+'''
 接入树莓派
 在 exec/physical.py 中实现 HTTP 请求树莓派服务。
 
@@ -113,3 +113,120 @@ MIT License
 语音输入支持
 
 完善树莓派物理控制
+
+
+
+
+THE-controller — Desktop AI Assistant (Local LLM + Physical Control)
+A lightweight desktop agent that understands natural language via a local LLM (Ollama) and executes desktop automation (clicks, typing, hotkeys, etc.), with extensibility to Raspberry Pi‑based physical control. Built with Python + Tkinter – simple, fast, and fully under your control.
+
+Project Structure
+text
+THE-controller/
+├── .gitignore               # Git ignore rules
+├── README.md                # Project documentation
+├── main.py                  # Optional entry point
+├── gui.py                   # Main GUI (Tkinter)
+│
+├── config/                  # Configuration module
+│   └── settings.py          # Ollama URL, model name, environment presets
+│
+├── llm/                     # LLM interaction
+│   └── client.py            # Calls local model, parses JSON, builds prompts (with OCR)
+│
+├── perception/              # Perception module
+│   ├── screenshot.py        # Screen capture (PIL)
+│   └── ocr.py               # OCR text extraction (EasyOCR)
+│
+├── exec/                    # Execution module
+│   ├── executor.py          # Executes actions (click, input, hotkey, wait, skill)
+│   ├── skills.py            # Skill registry and execution (e.g., open tab, search)
+│   └── physical.py          # Placeholder for Raspberry Pi physical control
+│
+└── docs/                    # (Optional) Additional documentation
+File Descriptions
+File	Description
+gui.py	Main graphical interface. Accepts natural language tasks, shows logs, and allows environment selection.
+main.py	Optional entry point that launches the GUI.
+config/settings.py	Global settings: Ollama API endpoint, model name, environment definitions (General/Chrome/Rhino, etc.).
+llm/client.py	Handles LLM communication. Combines task, environment, and screen OCR into a prompt, then parses the JSON response into actions.
+perception/screenshot.py	Captures the current screen as a PIL image (or byte stream).
+perception/ocr.py	Uses EasyOCR to extract text from the screen for context.
+exec/executor.py	Executes action dictionaries (e.g., click, input, hotkey, wait, skill).
+exec/skills.py	Predefined reusable skills (open tab, close tab, search). Supports registration so the AI can call them via skill actions.
+exec/physical.py	Future extension: communicate with a Raspberry Pi to control physical devices (robotic arm, sensors, etc.).
+Installation & Dependencies
+1. Prerequisites
+Python 3.10+
+
+Ollama installed and running locally (e.g., with model deepseek-coder:6.7b)
+
+2. Install Python packages
+bash
+pip install requests pyautogui pillow easyocr
+requests – calls the local Ollama API
+
+pyautogui – keyboard/mouse control
+
+pillow – screen capture
+
+easyocr – OCR (downloads models on first run)
+
+Usage
+Ensure Ollama is running (default port 11434).
+
+Launch the GUI:
+
+bash
+python gui.py
+Enter a natural language task, e.g.:
+
+“Open Notepad and type Hello World”
+
+“Open Chrome, go to baidu.com and search for weather”
+
+Select the current environment (General / Chrome / Rhino etc.) to help the AI understand the context.
+
+Click “Execute”. The system will:
+
+Capture the screen and extract text (OCR)
+
+Build a prompt with task, environment, and screen content
+
+Send it to the local LLM and parse the returned JSON actions
+
+Execute the actions and display logs
+
+Extending
+Add a new skill
+Write a function in exec/skills.py and register it:
+
+python
+def my_new_skill(param):
+    # implement functionality
+    return "execution result"
+
+register_skill("my_skill", my_new_skill, "skill description")
+The AI can then invoke it by outputting {"type": "skill", "name": "my_skill", "args": {...}}.
+
+Add a new environment
+Add an entry to the ENVIRONMENTS dictionary in config/settings.py with a system_prompt and an optional list of available skills.
+
+Integrate Raspberry Pi physical control
+Implement HTTP requests to your Pi’s service in exec/physical.py.
+
+Add a new action type (e.g., move_arm) in executor.py.
+
+The AI can then generate such actions.
+
+License
+MIT License
+
+Roadmap
+Multi‑step planning and self‑reflection
+
+Enhanced visual perception (object detection)
+
+Voice input support
+
+Full Raspberry Pi integration
